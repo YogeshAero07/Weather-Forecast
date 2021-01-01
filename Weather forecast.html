@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+  <title>Weather forecast</title>
+  <meta name="viewport" content="width=device-width,initialscale=1,maximum-scale=1,user-scalable=no">
+
+  <style>
+  body
+  {
+      background-image: url('https://cdn.pixabay.com/photo/2018/05/02/18/23/landscape-3369304_960_720.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+  }
+
+  @keyframes animatetop
+  {
+      from
+      {
+          opacity: 0;
+      }
+      to
+      {
+          opacity: 1;
+      }
+  }
+  #loader2
+  {
+      width: 40px;
+      height: 40px;
+      margin: -75px 0 0 -75px;
+      border: 10px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 10px solid #00cc99;
+      animation: spin 2s linear;
+      text-align: center;
+  }
+
+  @keyframes spin
+  {
+      0%
+      {
+          transform: rotate(0deg);
+      }
+      100%
+      {
+          transform: rotate(360deg);
+      }
+  }
+
+  #page
+  {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      flex-wrap: wrap;
+  }
+
+  .search
+  {
+      display: inline-block;
+      background-color: #cf7b4a ;
+      outline: none;
+      border-radius: 20px;
+      box-shadow: 0 0 3px #ff0000 , 0 0 5px #0000ff;
+      color: #99ffff;
+      animation-name: dance;
+      animation-duration: 2s;
+  }
+  .city
+  {
+      padding: 5px;
+      box-shadow: 0 0 3px #ff0000 , 0 0 5px #0000ff;
+      color: #000000;
+      outline: none;
+      border-radius: 20px;
+      animation-name: dance;
+      animation-duration: 2s;
+  }
+
+  #tit
+  {
+      color: #fff;
+      text-shadow: 0 0 3px #ff0000, 0 0 5px #0000ff;
+      font-family: Arial, Helvetica, sans-serif;
+      animation-name: dance;
+      animation-duration: 2s;
+  }
+  @keyframes dance
+  {
+      15%
+      {
+          -webkit-transform: translateX(5px);
+                  transform: translateX(5px);
+      }
+      30%
+      {
+          -webkit-transform: translateX(-5px);
+                  transform: translateX(-5px);
+      }
+      50%
+      {
+          -webkit-transform: translateX(3px);
+                  transform: translateX(3px);
+      }
+      65%
+      {
+          -webkit-transform: translateX(-3px);
+                  transform: translateX(-3px);
+      }
+      80%
+      {
+          -webkit-transform: translateX(2px);
+                  transform: translateX(2px);
+      }
+      100%
+      {
+          -webkit-transform: translateX(0);
+                  transform: translateX(0);
+      }
+  }
+
+  #fetch
+  {
+      display: none;
+      position: absolute;
+      justify-content: center;
+      align-items: center;
+      width: 90%;
+      height: 90%;
+      top: 10%;
+  }
+
+  #cright
+  {
+      position: fixed;
+      top: 90%;
+  }
+
+
+  #forecast
+  {
+      background: rgba( 103, 91, 107, .25 );
+      box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, .37 );
+              backdrop-filter: blur( 10px );
+      -webkit-backdrop-filter: blur( 10px );
+      border-radius: 10px;
+      display: none;
+      padding: 10px;
+  }
+  #forecast:hover
+  {
+      background: rgba(200, 182, 206, 0.5);
+  }
+  </style>
+</head>
+
+<body>
+    <div id ="page">
+     <div id ="tit"><h2>WEATHER FORECAST</h2></div>
+     <br>
+    <div style="display: flex;flex-direction: row;justify-content: center">
+    <input id="city"  class ="city"  placeholder="city">&emsp;
+    <input class="search" id="search" type="button" value="search" onclick = "load2() ,  fun(city.value)"><br>
+    </div>
+    <br>
+     <article id ="fetch">
+    <div id="loader2"></div>
+    </article>
+    <article id="forecast">
+      <b>
+      <br>
+
+      <p><div id="temp" style="text-align: center"></div></p>
+      <div><span   id="tempmin"style="float:left;margin-left: 10px"></span>
+      <span id="tempmax" style="float:right;margin-right: 10px">
+      </span></div>
+      <br>
+      <div  id="desimg"  style="text-align: center"></div>
+      <div id="des" style="text-align: center"></div><br>
+      <div><span   id="pres" style="float:left;margin-left: 10px"></span>
+     <span id="humid" style="float:right;margin-right: 10px">
+     </span></div>
+      <br>
+      <p><div id="wind" style="text-align: center"></div></p></b>
+      <br>
+      </article>
+       <div id="cright"  style="text-align: center"><h3>&copy;Devoloped by Yogesh Bhamare</h3></div>
+ </div>
+
+</body>
+
+
+ <script>
+ function load2()
+ {
+   document.getElementById("forecast").style.display = "none";
+   document.getElementById("fetch").style.display = "flex";
+   setTimeout(function() {document.getElementById("fetch").style.display = "none";}, 2000);
+   setTimeout(function() {document.getElementById("forecast").style.display = "block";}, 2100);
+
+ }
+
+ function fun(cityID) {
+   //api url and key
+   var key = "1f69bee5f6470cb83ac3c57b11eecd35";
+   var URL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityID +"&units=metric&appid=" + key;
+
+   // api request
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET', URL, false);
+   xhr.send();
+   var res = JSON.parse(xhr.response);
+    //console.log(res);
+   //data from api
+   var temp = res.main.temp + "&deg;C";
+   var tempmin = res.main.temp_min + "&deg;C";
+   var tempmax = res.main.temp_max + "&deg;C";
+   var pre = res.main.pressure + "mb";
+   var des = res.weather[0].description;
+   var humid = res.main.humidity+"%";
+   var wind = res.wind.speed+ "km/h";
+   var img = "https://openweathermap.org/img/w/"+res.weather[0].icon+".png";
+   var x = document.createElement("IMG");
+   x.setAttribute("src", img);
+   x.setAttribute("width", 80);
+   document.getElementById("desimg").innerHTML = "";
+   document.getElementById("temp").innerHTML = "Temperature: "+temp;
+   document.getElementById("tempmin").innerHTML = "Min: "+tempmin;
+   document.getElementById("tempmax").innerHTML = "Max:"+tempmax;
+   document.getElementById("pres").innerHTML = "Pressure: "+pre;
+   document.getElementById("des").innerHTML = des;
+   document.getElementById("desimg").appendChild(x);
+   document.getElementById("humid").innerHTML = "&emsp;Humidity:"+humid;
+   document.getElementById("wind").innerHTML = "Wind : "+wind+ " at " +res.wind.deg+"&deg;";
+
+ }
+
+ </script>
+
+
+
+</html>
+
+
+
